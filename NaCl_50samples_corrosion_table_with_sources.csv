@@ -1,0 +1,51 @@
+Sample ID,Material,NaCl (wt%),Temperature (°C),pH,Estimated Corrosion Rate (mm/yr),Estimated Corrosion Rate (mpy),Notes,Source
+NACL-01,API 5L X65,0.5,10,7.0,0.0152,0.598,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-02,API 5L X65,1.0,15,8.0,0.0067,0.264,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-03,API 5L X65,1.0,25,6.5,0.0384,1.512,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-04,API 5L X65,2.0,25,7.5,0.0181,0.713,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-05,API 5L X65,2.5,30,6.0,0.1028,4.047,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-06,API 5L X65,3.0,35,5.5,0.2011,7.917,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-07,API 5L X65,3.0,40,4.5,0.6164,24.268,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-08,API 5L X65,4.0,45,6.8,0.0808,3.181,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-09,API 5L X65,4.5,50,7.2,0.0752,2.961,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-10,API 5L X65,5.0,25,5.0,0.2577,10.146,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-11,API 5L X65,5.0,60,4.0,1.9457,76.602,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-12,API 5L X65,6.0,65,3.5,4.2797,168.492,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-13,API 5L X65,6.5,70,2.5,11.5848,456.094,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-14,API 5L X65,7.0,25,8.5,0.0131,0.516,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-15,API 5L X65,8.0,30,7.8,0.0354,1.394,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-16,API 5L X65,8.5,55,6.0,0.4001,15.752,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-17,API 5L X65,9.0,20,7.0,0.0534,2.102,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-18,API 5L X65,9.5,80,3.0,14.6544,576.944,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-19,API 5L X65,10.0,37,7.0,0.1106,4.354,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-20,API 5L X65,0.1,5,9.0,0.0016,0.063,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-21,API 5L X65,0.2,12,6.8,0.016,0.63,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-22,API 5L X65,0.3,15,7.0,0.0161,0.634,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-23,API 5L X65,0.5,18,7.2,0.0166,0.654,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-24,API 5L X65,1.0,20,7.5,0.0146,0.575,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-25,API 5L X65,1.5,22,6.5,0.0431,1.697,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-26,API 5L X65,2.0,25,6.0,0.076,2.992,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-27,API 5L X65,2.5,27,5.5,0.1511,5.949,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-28,API 5L X65,3.0,30,5.0,0.2651,10.437,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-29,API 5L X65,3.2,32,4.5,0.4086,16.087,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-30,API 5L X65,3.5,35,4.0,0.8135,32.027,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-31,API 5L X65,4.0,37,3.5,1.3134,51.709,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-32,API 5L X65,4.2,40,3.0,2.9009,114.208,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-33,API 5L X65,4.5,42,8.0,0.032,1.26,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-34,API 5L X65,5.0,45,8.2,0.0267,1.051,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-35,API 5L X65,5.5,47,8.5,0.0226,0.89,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-36,API 5L X65,6.0,50,6.8,0.139,5.472,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-37,API 5L X65,6.2,52,6.5,0.1728,6.803,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-38,API 5L X65,6.5,55,6.0,0.3064,12.063,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-39,API 5L X65,7.0,57,5.5,0.5416,21.323,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-40,API 5L X65,7.5,60,5.0,1.023,40.276,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-41,API 5L X65,8.0,62,4.5,1.9236,75.732,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-42,API 5L X65,8.2,65,4.0,3.6619,144.169,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-43,API 5L X65,8.5,67,3.5,5.2729,207.594,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-44,API 5L X65,9.0,70,3.0,11.3696,447.621,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-45,API 5L X65,9.2,72,7.5,0.1772,6.976,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"
+NACL-46,API 5L X65,9.5,75,7.8,0.1629,6.413,,Xu P. et al. (2022) RSC Adv. - Effect of chloride ions on carbon steel
+NACL-47,API 5L X65,9.8,77,8.0,0.1444,5.685,,Ahmed S. et al. (2023) MDPI - Chloride ions effect on carbon steel
+NACL-48,API 5L X65,10.0,80,7.2,0.285,11.22,,Pessu F. et al. (2020) Corrosion Journal - CO2 + Cl⁻ effect on X65
+NACL-49,API 5L X65,0.1,10,7.0,0.0139,0.547,,Ali N. et al. (2020) Sci Rep - NaCl concentration vs carbon steel corrosion
+NACL-50,API 5L X65,0.05,5,6.5,0.0164,0.646,,"Neville A., Barker R. et al. (2019) Univ. Leeds - X65 brine corrosion study"

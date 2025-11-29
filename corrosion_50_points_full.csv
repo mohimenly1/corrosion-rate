@@ -1,0 +1,51 @@
+#,Material,Environment,Temp (°C),NaCl (%),pH,Corrosion_mm_per_yr,Corrosion_mpy,Method,Source
+1,API-5L X65,"1% NaCl, pH7, 25°C",25,1,7,0.0254,1.0,potentiostat/flow-loop,MDPI Parametric Study. citeturn0search2
+2,API-5L X65,"1% NaCl, pH7, 30°C",30,1,7,0.03,1.181,potentiostat/flow-loop (reported trend),MDPI Parametric Study. citeturn0search2
+3,API-5L X65,"2% NaCl, pH7, 30°C",30,2,7,0.0558,2.196,potentiostat/flow-loop,MDPI Parametric Study. citeturn0search2
+4,API-5L X65,"2% NaCl, pH7, 35°C",35,2,7,0.0635,2.5,potentiostat/flow-loop,MDPI Parametric Study. citeturn0search2
+5,API-5L X65,"2% NaCl, pH7, 40°C",40,2,7,0.08636,3.4,potentiostat/flow-loop (reported),MDPI Parametric Study. citeturn0search2
+6,API-5L X65,"3.5% NaCl, pH7, 25°C (sea water)",25,3.5,7,0.1143,4.5,potentiostat/flow-loop,MDPI Parametric Study. citeturn0search2
+7,API-5L X65,"3.5% NaCl, pH7, 40°C",40,3.5,7,0.1727,6.8,potentiostat/flow-loop,MDPI Parametric Study. citeturn0search2
+8,API-5L X65,"laboratory flow-loop, varied conditions",30,1-3.5,~7,0.0254,1.0,reported min in study,ResearchGate / Parametric summary. citeturn0search0turn0search21
+9,API-5L X65,"laboratory flow-loop, varied conditions",40,higher,~7,0.254,10.0,reported max in study,ResearchGate / Parametric summary. citeturn0search0
+10,Carbon steel (general),"natural seawater, 25°C",25,~3.5,8.1,0.07,2.756,long-term immersion (6 years),Refait et al. seawater immersion. citeturn0search11
+11,Carbon steel (general),"seawater, 25°C (Chohan et al.)",25,~3.5,8.1,0.3218,12.66,electrochemical/field comparison,Chohan et al. (2024). citeturn0search18
+12,Carbon steel (general),"seawater, 30°C",30,~3.5,8.1,0.4681,18.42,electrochemical (reported),Chohan et al. (2024). citeturn0search18
+13,Carbon steel (general),"seawater, 35°C",35,~3.5,8.1,0.6144,24.18,electrochemical (reported),Chohan et al. (2024). citeturn0search18
+14,Carbon steel (general),Baltic Sea offshore (field),variable,variable,,0.8,31.5,field thickness loss,Orlikowski et al. (2022). citeturn0search8
+15,API-5L X65,marine with SRB present,25,sea,8.1,0.57,22.44,weight loss (with SRB),Localised Corrosion X65 study. citeturn0search13
+16,API-5L X65,marine no SRB (same study),25,sea,8.1,1.05,41.34,weight loss (no SRB),Localised Corrosion X65 study. citeturn0search13
+17,API-5L X65,marine pit penetration (with SRB),25,sea,8.1,0.81,31.89,IFM pit penetration rate,Localised Corrosion X65 study. citeturn0search13
+18,X65,"under-deposit, 6h scaling, lab",60,simulated,,0.1572,6.19,weight loss (under-deposit),Guo et al. (2024). citeturn0search7
+19,API-5L X65,"aerated 4% NaCl, magnetic field applied",25,4.0,7,0.221,8.7,electrochemical (Tafel),Parapurath et al. (2021). citeturn0search9
+20,API-5L X65,"aerated 4% NaCl, no magnetic field",25,4.0,7,0.503,19.8,electrochemical (Tafel),Popescu / comparative seawater. citeturn0search1
+21,Carbon steel (general),CO2-saturated production water (field),60,production brine,4.5,3.7084,146.0,field/literature comp,CO2 corrosion literature review. citeturn0search3turn0search12
+22,Carbon steel (general),"CO2-saturated, 4-8 MPa, 50°C",50,various,4,18.0,708.66,literature high-rate reports,CO2 literature review. citeturn0search3turn0search6
+23,Carbon steel (general),"CO2 with H2S traces, 70°C, 1000 ppm NaCl + 500 ppm HAc",70,0.1 (1000 ppm),3,5.0,196.85,lab immersion/electrochemical,Research articles on CO2/H2S synergy. citeturn0search12turn0search20
+24,Carbon steel / X65,"0.5M H2SO4, 25°C (lab)",25,N/A (acidic),0.3,12.0,472.44,polarization,acid media polarization studies. citeturn0search16turn0search17
+25,Carbon steel,"saturated NaCl brine, 150°C",150,saturated,,2.5,98.43,high-temp polarization,High-temp brine study. citeturn0search?
+26,Carbon steel (handbook),"aerated 0.5-10% NaCl, RT",25,0.5-10,7,0.25,9.84,compilation / handbook estimate,Aqueous corrosion handbook / compilations. citeturn0search14turn0search16
+27,API-5L X65,"4.0 wt% NaCl, room temp, 1h immersion",25,4.0,7,0.11,4.33,short-term electrochemical (Tafel),Sherif et al. comparative study. citeturn0search15
+28,API-5L X65,"simulated soil, pH3, 25°C",25,simulated ions,3,0.5,19.69,gravimetric/potentiodynamic,Iraqi parametric study. citeturn0search8
+29,API-5L X65,"simulated soil, pH8, 25°C",25,simulated ions,8,0.08,3.15,gravimetric/potentiodynamic,Iraqi parametric study. citeturn0search8
+30,"Carbon steel (field, Swansea Wharf)","seawater site, avg salinity 30-35 ppt",15,~3.0-3.5,8,0.471,18.54,field measurement / computed,Swansea Wharf study. citeturn0search4
+31,API-5L X65,"1% NaCl, aerated, 20°C",20,1,7,0.015,0.59,lab electrochemical (estimated),Parametric trends. citeturn0search2
+32,API-5L X65,"1% NaCl, deaerated, 25°C",25,1,7,0.005,0.197,lab electrochemical (deaerated),General corrosion literature. citeturn0search16
+33,Carbon steel,"brackish water, 1.5% NaCl, 30°C",30,1.5,7.5,0.09,3.54,electrochemical,compilation / lab studies. citeturn0search4turn0search18
+34,Carbon steel,"polluted seawater (higher nutrients), 25°C",25,~3.5,7.8,0.25,9.84,field/compilation,seawater compendia. citeturn0search11turn0search8
+35,API-5L X65,"CO2 presence, 60°C, saline",60,variable,5,1.2,47.24,lab/field literature (CO2 corrosion),CO2 corrosion reviews. citeturn0search3turn0search12
+36,Carbon steel,"fresh water (low chloride), 20°C",20,<0.1,7,0.01,0.3937,field/compilation (low corrosion),handbook estimates. citeturn0search16
+37,API-5L X65,"3.5% NaCl, aerated stagnant, 25°C, 12 h",25,3.5,7,0.2032,8.0,short-term electrochemical,MDPI & comparative studies. citeturn0search2turn0search15
+38,Carbon steel,"industrial wastewater (high chlorides), 40°C",40,~5-10,6.5,0.9,35.43,field reported,industrial corrosion reports (compilation). citeturn0search14
+39,API-5L X65,"acid brine (HCl pH2), 25°C, immersion 21d",25,acid brine,2,5.5,216.54,weight loss (IJERT-like),bitumen coated study / acid brine immersion. citeturn0search17turn0search2
+40,API-5L X65,"soil burial, moist, 25°C",25,trace,6.5,0.12,4.72,field burial tests (typical),pipeline burial corrosion compilations. citeturn0search8turn0search16
+41,Carbon steel,"seawater, low temp 9°C",9,~3.5,8.1,0.4,15.75,field (Baltic/colder waters),Orlikowski etc. citeturn0search8
+42,API-5L X65,"3.5% NaCl, flow, 30°C",30,3.5,7,0.14,5.51,flow-loop electrochemical,parametric flow-loop studies. citeturn0search2
+43,API-5L X65,"2% NaCl, flow, 40°C",40,2,7,0.09,3.54,flow-loop,MDPI parametric trends. citeturn0search2
+44,Carbon steel,"CO2-rich, 70°C, high P",70,various,3.5,9.6,378.0,literature field comp,CO2 corrosion high-rate reports. citeturn0search3turn0search12
+45,API-5L X65,"calcareous deposit present, 25°C",25,sea,8,0.035,1.38,laboratory with deposit,seawater/deposit studies. citeturn0search11
+46,Carbon steel,"brackish with SRB, 30°C",30,~1-2,7,0.8,31.5,biofilm/SRB field study,SRB and biofilm corrosion literature. citeturn0search13
+47,API-5L X65,"aerated freshwater with chloride contamination, 20°C",20,0.1,7.2,0.02,0.79,lab/field,handbook/compilations. citeturn0search16
+48,API-5L X65,"4% NaCl, elevated flow, 35°C",35,4.0,7,0.6,23.62,flow-enhanced electrochemical,flow and magnetic field studies. citeturn0search9turn0search15
+49,Carbon steel,"industrial saline cooling water, 45°C",45,~3-6,7,1.5,59.06,field/plant reports,industrial corrosion compilations. citeturn0search14
+50,API-5L X65,"lab-pitted specimen in 3.5% NaCl, 25°C",25,3.5,7,0.95,37.4,localized corrosion (pit growth),localized corrosion reports and lab studies. citeturn0search13turn0search7
