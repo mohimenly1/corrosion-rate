@@ -1,0 +1,9 @@
+{
+  "dart.projectSearchDepth": 2,
+  "dart.flutterSdkPath": null,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true
+  }
+}
+
