@@ -11,17 +11,28 @@ from database.db_connection import DatabaseConnection
 from config import Config
 import os
 from datetime import datetime
+import arabic_reshaper
+from bidi.algorithm import get_display
 
 # Set style for better-looking plots
 plt.style.use('seaborn-v0_8-darkgrid')
 sns.set_palette("husl")
 
-# Arabic font support (if available)
+# Arabic font support
 try:
-    plt.rcParams['font.family'] = 'Arial Unicode MS'
+    # Try to use a font that supports Arabic
+    plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.unicode_minus'] = False
 except:
     pass
+
+def format_arabic_text(text):
+    """Format Arabic text for proper display in matplotlib"""
+    if text:
+        reshaped_text = arabic_reshaper.reshape(text)
+        bidi_text = get_display(reshaped_text)
+        return bidi_text
+    return text
 
 # Create output directory
 output_dir = 'research_visualizations'
@@ -100,7 +111,7 @@ def generate_ph_vs_corrosion_chart(df):
     
     plt.xlabel('pH', fontsize=14, fontweight='bold')
     plt.ylabel('Corrosion Rate (mm/year)', fontsize=14, fontweight='bold')
-    plt.title('Corrosion Rate vs pH\nمعدل التآكل مقابل درجة الحموضة', 
+    plt.title('Corrosion Rate vs pH\n' + format_arabic_text('معدل التآكل مقابل درجة الحموضة'), 
               fontsize=16, fontweight='bold', pad=20)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -143,7 +154,7 @@ def generate_temperature_vs_corrosion_chart(df):
     
     plt.xlabel('Temperature (°C)', fontsize=14, fontweight='bold')
     plt.ylabel('Corrosion Rate (mm/year)', fontsize=14, fontweight='bold')
-    plt.title('Corrosion Rate vs Temperature\nمعدل التآكل مقابل درجة الحرارة', 
+    plt.title('Corrosion Rate vs Temperature\n' + format_arabic_text('معدل التآكل مقابل درجة الحرارة'), 
               fontsize=16, fontweight='bold', pad=20)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -188,7 +199,7 @@ def generate_medium_vs_corrosion_chart(df):
     
     plt.xlabel('Medium/Environment', fontsize=14, fontweight='bold')
     plt.ylabel('Average Corrosion Rate (mm/year)', fontsize=14, fontweight='bold')
-    plt.title('Corrosion Rate vs Medium\nمعدل التآكل مقابل الوسط', 
+    plt.title('Corrosion Rate vs Medium\n' + format_arabic_text('معدل التآكل مقابل الوسط'), 
               fontsize=16, fontweight='bold', pad=20)
     plt.xticks(range(len(medium_data)), medium_data['medium'], rotation=45, ha='right')
     plt.grid(True, alpha=0.3, axis='y')
@@ -240,7 +251,7 @@ def generate_material_comparison_chart(df):
     
     plt.ylabel('Material Type', fontsize=14, fontweight='bold')
     plt.xlabel('Average Corrosion Rate (mm/year)', fontsize=14, fontweight='bold')
-    plt.title('Material Comparison\nمقارنة المواد', 
+    plt.title('Material Comparison\n' + format_arabic_text('مقارنة المواد'), 
               fontsize=16, fontweight='bold', pad=20)
     plt.yticks(range(len(material_data)), material_data['material'])
     plt.grid(True, alpha=0.3, axis='x')
@@ -272,7 +283,7 @@ def generate_nacl_vs_corrosion_chart(df):
         
         plt.xlabel('NaCl Concentration (%)', fontsize=14, fontweight='bold')
         plt.ylabel('Corrosion Rate (mm/year)', fontsize=14, fontweight='bold')
-        plt.title('Corrosion Rate vs NaCl Concentration\nمعدل التآكل مقابل تركيز كلوريد الصوديوم', 
+        plt.title('Corrosion Rate vs NaCl Concentration\n' + format_arabic_text('معدل التآكل مقابل تركيز كلوريد الصوديوم'), 
                   fontsize=16, fontweight='bold', pad=20)
         plt.legend()
         plt.grid(True, alpha=0.3)
@@ -332,7 +343,7 @@ def generate_3d_surface_plot(df):
     ax.set_ylabel('pH', fontsize=12, fontweight='bold')
     ax.set_zlabel('Corrosion Rate (mm/year)', fontsize=12, fontweight='bold')
     ax.set_title('3D Surface: Corrosion Rate vs Temperature & pH\n' +
-                 'السطح ثلاثي الأبعاد: معدل التآكل مقابل درجة الحرارة و pH', 
+                 format_arabic_text('السطح ثلاثي الأبعاد: معدل التآكل مقابل درجة الحرارة و pH'), 
                  fontsize=14, fontweight='bold', pad=20)
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.tight_layout()
@@ -382,7 +393,8 @@ def generate_statistics_summary(df):
     
     table = ax.table(cellText=[[stats_data['Metric'][i], stats_data['Value'][i]] 
                                for i in range(len(stats_data['Metric']))],
-                    colLabels=['Metric / المؤشر', 'Value / القيمة'],
+                    colLabels=['Metric / ' + format_arabic_text('المؤشر'), 
+                              'Value / ' + format_arabic_text('القيمة')],
                     cellLoc='center',
                     loc='center',
                     colWidths=[0.6, 0.4])
@@ -402,7 +414,7 @@ def generate_statistics_summary(df):
     table[(0, 0)].set_text_props(weight='bold', color='white')
     table[(0, 1)].set_text_props(weight='bold', color='white')
     
-    plt.title('Statistical Summary\nالملخص الإحصائي', 
+    plt.title('Statistical Summary\n' + format_arabic_text('الملخص الإحصائي'), 
               fontsize=16, fontweight='bold', pad=20)
     plt.tight_layout()
     
@@ -442,7 +454,7 @@ def generate_correlation_heatmap(df):
                 center=0, square=True, linewidths=2, cbar_kws={"shrink": 0.8},
                 vmin=-1, vmax=1)
     
-    plt.title('Correlation Matrix\nمصفوفة الارتباط', 
+    plt.title('Correlation Matrix\n' + format_arabic_text('مصفوفة الارتباط'), 
               fontsize=16, fontweight='bold', pad=20)
     plt.tight_layout()
     
