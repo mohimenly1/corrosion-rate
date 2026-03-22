@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 class DatabaseConnection:
     _instance = None
-    _connection = None
     
     def __new__(cls):
         if cls._instance is None:
@@ -15,19 +14,18 @@ class DatabaseConnection:
         return cls._instance
     
     def get_connection(self):
-        if self._connection is None or not self._connection.is_connected():
-            try:
-                db_config = Config.get_db_config()
-                self._connection = mysql.connector.connect(**db_config)
-                logger.info("Database connection established")
-            except Error as e:
-                logger.error(f"Error connecting to MySQL: {e}")
-                raise
-        return self._connection
+        try:
+            db_config = Config.get_db_config()
+            connection = mysql.connector.connect(**db_config)
+            logger.info("Database connection established")
+            return connection
+        except Error as e:
+            logger.error(f"Error connecting to MySQL: {e}")
+            raise
     
-    def close_connection(self):
-        if self._connection and self._connection.is_connected():
-            self._connection.close()
+    def close_connection(self, connection):
+        if connection and connection.is_connected():
+            connection.close()
             logger.info("Database connection closed")
     
     def execute_query(self, query, params=None):
@@ -47,4 +45,4 @@ class DatabaseConnection:
             raise
         finally:
             cursor.close()
-
+            self.close_connection(connection)

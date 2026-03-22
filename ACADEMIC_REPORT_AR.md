@@ -521,7 +521,57 @@ ln(CR) = ln(A) + b × ln([Cl⁻]) - K × (1 / Tₖ) + c × pH
 
 ---
 
-## 21. الملفات المرجعية داخل المشروع
+## 21. قائمة الأشكال المقترحة
+
+يمكن إدراج الصور الآتية في النسخة المنسقة من التقرير، وقد تم حفظها داخل المسار:
+
+[`report_assets/web_screenshots`](/Users/sulimangzllal/Development/hareth/report_assets/web_screenshots)
+
+### شكل (1): الواجهة الرئيسية لمنصة الويب
+
+- الملف:
+  [01_dashboard_overview.png](/Users/sulimangzllal/Development/hareth/report_assets/web_screenshots/01_dashboard_overview.png)
+- الوصف المقترح:
+  الواجهة الرئيسية لمنصة الويب البديلة، وتشمل حالة الخادم، حالة النموذج، وبطاقات الملخص العامة.
+
+### شكل (2): نموذج إدخال بيانات حساب معدل التآكل
+
+- الملف:
+  [02_calculation_form.png](/Users/sulimangzllal/Development/hareth/report_assets/web_screenshots/02_calculation_form.png)
+- الوصف المقترح:
+  نموذج إدخال بيانات الحساب، ويشمل نوع العينة ودرجة الحرارة ودرجة الحموضة ونسبة `NaCl` والوسط.
+
+### شكل (3): نتيجة الحساب باستخدام النموذج التنبؤي
+
+- الملف:
+  [03_calculation_result.png](/Users/sulimangzllal/Development/hareth/report_assets/web_screenshots/03_calculation_result.png)
+- الوصف المقترح:
+  مخرجات الحساب باستخدام النموذج المعتمد، وتتضمن معدل التآكل بوحدتي `mm/yr` و`mpy` والمعادلة المستخدمة ومؤشرات الأداء.
+
+### شكل (4): واجهة رفع ملف CSV
+
+- الملف:
+  [04_csv_upload.png](/Users/sulimangzllal/Development/hareth/report_assets/web_screenshots/04_csv_upload.png)
+- الوصف المقترح:
+  واجهة رفع ملف البيانات بصيغة `CSV` من الويب كبديل للتطبيق المحمول.
+
+### شكل (5): الرسوم الإحصائية في واجهة الويب
+
+- الملف:
+  [06_statistics_charts.png](/Users/sulimangzllal/Development/hareth/report_assets/web_screenshots/06_statistics_charts.png)
+- الوصف المقترح:
+  عرض الرسوم البيانية الخاصة بمعدل التآكل مقابل `pH` ودرجة الحرارة والوسط ومقارنة المواد.
+
+### شكل (6): جدول البيانات المخزنة
+
+- الملف:
+  [07_samples_table.png](/Users/sulimangzllal/Development/hareth/report_assets/web_screenshots/07_samples_table.png)
+- الوصف المقترح:
+  جدول البيانات المخزنة في النظام مع إمكانات الفلترة والعرض المباشر من الواجهة.
+
+---
+
+## 22. الملفات المرجعية داخل المشروع
 
 - [backend/services/model_trainer.py](/Users/sulimangzllal/Development/hareth/backend/services/model_trainer.py)
 - [backend/services/corrosion_calculator.py](/Users/sulimangzllal/Development/hareth/backend/services/corrosion_calculator.py)
@@ -531,6 +581,6 @@ ln(CR) = ln(A) + b × ln([Cl⁻]) - K × (1 / Tₖ) + c × pH
 
 ---
 
-## 22. خلاصة تنفيذية مختصرة
+## 23. خلاصة تنفيذية مختصرة
 
 تم استبدال المعادلة التجريبية الثابتة بنموذج تنبؤي مشتق من بيانات فعلية لخمسين عينة `NaCl` باستخدام الصيغة `CR = A × [Cl⁻]^b × exp(-K/Tₖ) × exp(c × pH)`. تمت خطية النموذج وتحويله إلى انحدار خطي متعدد لاستخراج معاملات أولية ذات دلالة إحصائية، ثم تم تنفيذ ملاءمة لاخطية واختبارها. بعد تقسيم البيانات إلى `30` نقطة تدريب و`20` نقطة اختبار، أظهرت نتائج التحقق أن النموذج الخطي بعد التحويل اللوغاريتمي كان الأفضل في التعميم على بيانات الاختبار، حيث حقق `R² = 0.9606` و`RMSE = 0.6837 mm/yr`. كما تم الاحتفاظ بالقيم العالية وعدم حذفها كقيم شاذة، وتم دمج النموذج الناتج داخل التطبيق البرمجي بحيث أصبحت عملية الحساب معتمدة على نموذج متعلم من البيانات ومتحقق من صلاحيته.

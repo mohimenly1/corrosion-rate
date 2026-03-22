@@ -3,233 +3,884 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم معدل التآكل</title>
+    <title>برنامج معدل التآكل</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bg: #f4efe7;
+            --panel: #fffdf8;
+            --ink: #17313e;
+            --muted: #6d7a82;
+            --line: #dfd5c8;
+            --brand: #0f766e;
+            --brand-dark: #0b534f;
+            --accent: #c97f2b;
+            --danger: #b23a2b;
+            --danger-soft: #fbe5df;
+            --success: #166534;
+            --success-soft: #e7f6ea;
+            --shadow: 0 18px 45px rgba(23, 49, 62, 0.12);
+        }
+
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            margin: 0;
+            font-family: "Tahoma", "Segoe UI", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top right, rgba(201, 127, 43, 0.15), transparent 28%),
+                linear-gradient(180deg, #efe6da 0%, var(--bg) 28%, #efe7dc 100%);
             min-height: 100vh;
         }
-        
-        .container {
-            max-width: 1200px;
+
+        .shell {
+            max-width: 1420px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 28px 18px 40px;
         }
-        
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-        }
-        
-        .stats-grid {
+
+        .hero {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: 1.3fr 0.9fr;
+            gap: 18px;
+            margin-bottom: 22px;
         }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .hero-card,
+        .summary-card,
+        .section,
+        .metrics-panel,
+        .table-panel {
+            background: var(--panel);
+            border: 1px solid rgba(223, 213, 200, 0.9);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .hero-card {
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            left: -50px;
+            bottom: -70px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(15, 118, 110, 0.12), transparent 66%);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.1);
+            color: var(--brand-dark);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(30px, 4vw, 48px);
+            line-height: 1.1;
+        }
+
+        .hero-card p {
+            margin: 0;
+            max-width: 760px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .summary-card {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-card h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .status-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: #f5f7f5;
+            border: 1px solid #e2e8e2;
+        }
+
+        .status-box strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #b8b8b8;
+            flex-shrink: 0;
+        }
+
+        .status-dot.ok {
+            background: #1f9d55;
+            box-shadow: 0 0 0 8px rgba(31, 157, 85, 0.12);
+        }
+
+        .status-dot.bad {
+            background: var(--danger);
+            box-shadow: 0 0 0 8px rgba(178, 58, 43, 0.12);
+        }
+
+        .top-grid {
+            display: grid;
+            grid-template-columns: 0.95fr 1.05fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .section {
+            padding: 22px;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field label {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: white;
+            padding: 12px 14px;
+            font-size: 15px;
+            color: var(--ink);
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background: var(--brand);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
         }
-        
-        .stat-card h3 {
-            font-size: 1.2em;
+
+        .btn-secondary {
+            background: #e7eef0;
+            color: var(--ink);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        .result-grid,
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .result-card,
+        .metric-card {
+            border-radius: 18px;
+            padding: 16px;
+            background: #fbfaf7;
+            border: 1px solid #eee4d7;
+        }
+
+        .result-card small,
+        .metric-card small {
+            color: var(--muted);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .result-value,
+        .metric-value {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .result-value.green {
+            color: var(--success);
+        }
+
+        .result-value.orange {
+            color: var(--accent);
+        }
+
+        .result-value.red {
+            color: var(--danger);
+        }
+
+        .meta-card {
+            margin-top: 14px;
+            padding: 16px;
+            border-radius: 18px;
+            background: #f3f8f7;
+            border: 1px solid #d6ebe7;
+        }
+
+        .meta-card p {
+            margin: 0 0 8px;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .meta-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .summary-stat {
+            padding: 18px;
+            border-radius: 22px;
+            background: var(--panel);
+            border: 1px solid rgba(223, 213, 200, 0.9);
+            box-shadow: var(--shadow);
+        }
+
+        .summary-stat small {
+            display: block;
+            color: var(--muted);
             margin-bottom: 10px;
         }
-        
-        .stat-card .value {
-            font-size: 2.5em;
-            font-weight: bold;
+
+        .summary-stat strong {
+            font-size: 32px;
         }
-        
-        .chart-container {
-            margin: 30px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 18px;
         }
-        
-        .chart-container h2 {
-            margin-bottom: 20px;
-            color: #333;
+
+        .chart-wrap {
+            min-height: 340px;
         }
-        
-        .upload-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+
+        .chart-wrap canvas {
+            width: 100% !important;
+            height: 280px !important;
         }
-        
-        .upload-section input[type="file"] {
-            margin: 10px 0;
+
+        .table-panel {
+            padding: 22px;
+            overflow: hidden;
         }
-        
-        .btn {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        
-        .btn:hover {
-            background: #5568d3;
+
+        .table-scroll {
+            overflow: auto;
+            border: 1px solid #e9ddcf;
+            border-radius: 18px;
         }
-        
+
         table {
             width: 100%;
+            min-width: 980px;
             border-collapse: collapse;
-            margin-top: 20px;
+            background: white;
         }
-        
-        th, td {
-            padding: 12px;
+
+        th,
+        td {
+            padding: 12px 14px;
             text-align: right;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #efe5d8;
+            vertical-align: top;
+            font-size: 14px;
         }
-        
+
         th {
-            background: #667eea;
-            color: white;
+            background: #f3ede4;
+            color: var(--ink);
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
-        
-        tr:hover {
-            background: #f5f5f5;
+
+        tbody tr:hover {
+            background: #fff8ef;
+        }
+
+        .tag {
+            display: inline-flex;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .tag.green {
+            background: #e6f6ea;
+            color: var(--success);
+        }
+
+        .tag.orange {
+            background: #fff1e1;
+            color: #9a5a0a;
+        }
+
+        .tag.red {
+            background: #fde8e5;
+            color: var(--danger);
+        }
+
+        .message {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            display: none;
+            line-height: 1.7;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: var(--success-soft);
+            color: var(--success);
+            border: 1px solid #b7e0c0;
+        }
+
+        .message.error {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid #f0c5bc;
+        }
+
+        .message.info {
+            background: #eef6f5;
+            color: var(--brand-dark);
+            border: 1px solid #cae4e1;
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        @media (max-width: 1100px) {
+            .hero,
+            .top-grid,
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .controls,
+            .toolbar,
+            .result-grid,
+            .metrics-grid,
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .shell {
+                padding: 16px 12px 30px;
+            }
+
+            .hero-card,
+            .summary-card,
+            .section,
+            .table-panel {
+                border-radius: 20px;
+                padding: 18px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>لوحة تحكم معدل التآكل</h1>
-        
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>إجمالي العينات</h3>
-                <div class="value" id="totalSamples">0</div>
+    <div class="shell">
+        <div class="hero">
+            <section class="hero-card">
+                <div class="eyebrow">واجهة ويب احتياطية للنظام</div>
+                <h1>برنامج معدل التآكل</h1>
+                <p>
+                    هذه الواجهة تقدم بديلاً عملياً للتطبيق عند الحاجة، وتشمل حساب معدل التآكل،
+                    عرض البيانات، الرسوم الإحصائية، رفع ملفات CSV، وإدارة قاعدة البيانات من المتصفح مباشرة.
+                </p>
+            </section>
+
+            <aside class="summary-card">
+                <h2>حالة النظام</h2>
+                <div class="status-box">
+                    <div>
+                        <strong>الخادم</strong>
+                        <span id="healthText">جارٍ التحقق...</span>
+                    </div>
+                    <span id="healthDot" class="status-dot"></span>
+                </div>
+                <div class="status-box">
+                    <div>
+                        <strong>طريقة الملاءمة</strong>
+                        <span id="modelFitMethod">-</span>
+                    </div>
+                </div>
+                <div class="status-box">
+                    <div>
+                        <strong>المعادلة المعتمدة</strong>
+                        <span id="modelEquation" style="font-size:13px;">-</span>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="refreshAllBtn">تحديث كل البيانات</button>
+            </aside>
+        </div>
+
+        <div class="top-grid">
+            <section class="section" id="calculationSection">
+                <div class="section-title">
+                    <div>
+                        <h2>حساب معدل التآكل</h2>
+                        <div class="section-subtitle">بديل مباشر لشاشة الحساب في التطبيق</div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <div class="field">
+                        <label for="materialSelect">نوع العينة</label>
+                        <select id="materialSelect"></select>
+                    </div>
+                    <div class="field" id="customMaterialWrap" style="display:none;">
+                        <label for="customMaterialInput">أدخل نوع العينة</label>
+                        <input id="customMaterialInput" type="text" placeholder="مثال: Inconel 625">
+                    </div>
+                    <div class="field">
+                        <label for="temperatureInput">درجة الحرارة (°C)</label>
+                        <input id="temperatureInput" type="number" step="0.01" placeholder="25">
+                    </div>
+                    <div class="field">
+                        <label for="phInput">درجة الحموضة pH</label>
+                        <input id="phInput" type="number" step="0.01" placeholder="7">
+                    </div>
+                    <div class="field">
+                        <label for="naclInput">نسبة NaCl (%)</label>
+                        <input id="naclInput" type="number" step="0.01" placeholder="3.5">
+                    </div>
+                    <div class="field">
+                        <label for="mediumInput">الوسط</label>
+                        <input id="mediumInput" type="text" placeholder="seawater">
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="calculateBtn">حساب الآن</button>
+                    <button class="btn btn-secondary" id="fillSampleBtn">ملء مثال تجريبي</button>
+                    <button class="btn btn-accent" id="trainModelBtn">إعادة تدريب النموذج</button>
+                </div>
+
+                <div id="calcMessage" class="message"></div>
+
+                <div class="result-grid" style="margin-top:16px;">
+                    <div class="result-card">
+                        <small>معدل التآكل</small>
+                        <div id="resultMm" class="result-value">-</div>
+                        <small>mm/yr</small>
+                    </div>
+                    <div class="result-card">
+                        <small>معدل التآكل</small>
+                        <div id="resultMpy" class="result-value">-</div>
+                        <small>mpy</small>
+                    </div>
+                </div>
+
+                <div class="meta-card">
+                    <p><strong>المعادلة المستخدمة:</strong> <span id="calcEquation">-</span></p>
+                    <p><strong>اسم النموذج:</strong> <span id="calcModelName">-</span></p>
+                    <p><strong>طريقة الملاءمة:</strong> <span id="calcFitMethod">-</span></p>
+                </div>
+
+                <div class="metrics-grid" style="margin-top:14px;">
+                    <div class="metric-card">
+                        <small>R² للاختبار</small>
+                        <div id="metricR2" class="metric-value">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <small>RMSE للاختبار</small>
+                        <div id="metricRmse" class="metric-value">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <small>MAE للاختبار</small>
+                        <div id="metricMae" class="metric-value">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <small>النموذج المختار</small>
+                        <div id="selectedModelKey" class="metric-value" style="font-size:22px;">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="uploadSection">
+                <div class="section-title">
+                    <div>
+                        <h2>رفع الملفات وإدارة البيانات</h2>
+                        <div class="section-subtitle">بديل لشاشة رفع CSV مع أدوات مرنة للعرض</div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <div class="field full">
+                        <label for="csvFile">ملف CSV</label>
+                        <input id="csvFile" type="file" accept=".csv">
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="uploadBtn">رفع الملف</button>
+                    <button class="btn btn-danger" id="clearDbBtn">مسح قاعدة البيانات</button>
+                </div>
+
+                <div id="uploadMessage" class="message"></div>
+
+                <div class="meta-card">
+                    <p><strong>فائدة هذه الصفحة:</strong> يمكن استخدامها كواجهة تشغيل بديلة عندما يتعذر تشغيل التطبيق أو عند الحاجة إلى العرض عبر المتصفح مباشرة.</p>
+                    <p><strong>إدارة البيانات:</strong> عملية المسح تحذف العينات المستوردة، الحسابات المحفوظة، سجل الملفات المرفوعة، والملفات الموجودة داخل مجلد الرفع.</p>
+                </div>
+            </section>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="summary-stat">
+                <small>إجمالي العينات</small>
+                <strong id="totalSamples">0</strong>
             </div>
-            <div class="stat-card">
-                <h3>متوسط معدل التآكل</h3>
-                <div class="value" id="avgRate">0</div>
+            <div class="summary-stat">
+                <small>متوسط معدل التآكل</small>
+                <strong id="avgRate">0</strong>
             </div>
-            <div class="stat-card">
-                <h3>أنواع المواد</h3>
-                <div class="value" id="materialTypes">0</div>
+            <div class="summary-stat">
+                <small>أنواع المواد</small>
+                <strong id="materialTypes">0</strong>
+            </div>
+            <div class="summary-stat">
+                <small>عدد الأوساط</small>
+                <strong id="mediumTypes">0</strong>
             </div>
         </div>
-        
-        <div class="upload-section">
-            <h2>رفع ملف CSV</h2>
-            <input type="file" id="csvFile" accept=".csv">
-            <button class="btn" onclick="uploadCSV()">رفع الملف</button>
-            <div id="uploadStatus"></div>
+
+        <div class="charts-grid" id="statisticsSection">
+            <section class="section chart-wrap">
+                <div class="section-title">
+                    <div>
+                        <h2>معدل التآكل مقابل pH</h2>
+                        <div class="section-subtitle">العلاقة الإحصائية اعتماداً على البيانات المخزنة</div>
+                    </div>
+                </div>
+                <canvas id="phChart"></canvas>
+            </section>
+
+            <section class="section chart-wrap">
+                <div class="section-title">
+                    <div>
+                        <h2>معدل التآكل مقابل درجة الحرارة</h2>
+                        <div class="section-subtitle">متوسط المعدل بحسب درجة الحرارة</div>
+                    </div>
+                </div>
+                <canvas id="tempChart"></canvas>
+            </section>
+
+            <section class="section chart-wrap">
+                <div class="section-title">
+                    <div>
+                        <h2>معدل التآكل مقابل الوسط</h2>
+                        <div class="section-subtitle">أعلى الأوساط من حيث متوسط العدوانية</div>
+                    </div>
+                </div>
+                <canvas id="mediumChart"></canvas>
+            </section>
+
+            <section class="section chart-wrap">
+                <div class="section-title">
+                    <div>
+                        <h2>مقارنة المواد</h2>
+                        <div class="section-subtitle">أعلى المواد من حيث متوسط معدل التآكل</div>
+                    </div>
+                </div>
+                <canvas id="materialChart"></canvas>
+            </section>
         </div>
-        
-        <div class="chart-container">
-            <h2>معدل التآكل مقابل pH</h2>
-            <canvas id="phChart"></canvas>
-        </div>
-        
-        <div class="chart-container">
-            <h2>معدل التآكل مقابل درجة الحرارة</h2>
-            <canvas id="tempChart"></canvas>
-        </div>
-        
-        <div class="chart-container">
-            <h2>معدل التآكل مقابل الوسط</h2>
-            <canvas id="mediumChart"></canvas>
-        </div>
-        
-        <div class="chart-container">
-            <h2>آخر العينات</h2>
-            <table id="samplesTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>المادة</th>
-                        <th>الوسط</th>
-                        <th>درجة الحرارة</th>
-                        <th>pH</th>
-                        <th>معدل التآكل (mm/yr)</th>
-                    </tr>
-                </thead>
-                <tbody id="samplesBody"></tbody>
-            </table>
+
+        <section class="table-panel" id="dataSection">
+            <div class="section-title">
+                <div>
+                    <h2>البيانات المخزنة</h2>
+                    <div class="section-subtitle">بديل مباشر لشاشة البيانات في التطبيق</div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="field">
+                    <label for="filterMaterial">تصفية حسب المادة</label>
+                    <input id="filterMaterial" type="text" placeholder="API 5L X65">
+                </div>
+                <div class="field">
+                    <label for="filterMedium">تصفية حسب الوسط</label>
+                    <input id="filterMedium" type="text" placeholder="seawater">
+                </div>
+                <div class="field">
+                    <label>&nbsp;</label>
+                    <div class="actions" style="margin-top:0;">
+                        <button class="btn btn-secondary" id="applyFiltersBtn">تطبيق الفلاتر</button>
+                        <button class="btn btn-secondary" id="resetFiltersBtn">إعادة ضبط</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tableMessage" class="message"></div>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>العينة</th>
+                            <th>الوسط</th>
+                            <th>درجة الحرارة</th>
+                            <th>pH</th>
+                            <th>NaCl %</th>
+                            <th>mm/yr</th>
+                            <th>mpy</th>
+                            <th>المصدر</th>
+                        </tr>
+                    </thead>
+                    <tbody id="samplesBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="footer-note">
+            للوصول إلى هذه الصفحة استخدم الرابط <strong>/dashboard</strong> بعد تشغيل الـ backend.
         </div>
     </div>
-    
+
     <script>
-        const API_URL = 'http://localhost:5001/api';
-        
-        let phChart, tempChart, mediumChart;
-        
-        async function loadData() {
+        const API_URL = `${window.location.origin}/api`;
+        const OTHER_MATERIAL_VALUE = '__other__';
+
+        let phChart;
+        let tempChart;
+        let mediumChart;
+        let materialChart;
+
+        async function requestJson(path, options = {}) {
+            const response = await fetch(`${API_URL}${path}`, options);
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.error || data.message || `Request failed: ${response.status}`);
+            }
+            return data;
+        }
+
+        function setMessage(id, text, type = 'info') {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = `message show ${type}`;
+        }
+
+        function clearMessage(id) {
+            const el = document.getElementById(id);
+            el.textContent = '';
+            el.className = 'message';
+        }
+
+        function formatNumber(value, digits = 4) {
+            if (value === null || value === undefined || Number.isNaN(Number(value))) return '-';
+            return Number(value).toFixed(digits);
+        }
+
+        function rateClass(rate) {
+            if (rate < 0.1) return 'green';
+            if (rate < 1.0) return 'orange';
+            return 'red';
+        }
+
+        async function loadHealth() {
+            const healthText = document.getElementById('healthText');
+            const healthDot = document.getElementById('healthDot');
             try {
-                // Load statistics
-                const statsResponse = await fetch(`${API_URL}/statistics`);
-                const stats = await statsResponse.json();
-                
-                // Load samples
-                const samplesResponse = await fetch(`${API_URL}/samples`);
-                const samplesData = await samplesResponse.json();
-                const samples = samplesData.samples || [];
-                
-                // Update stats
-                document.getElementById('totalSamples').textContent = samples.length;
-                const avgRate = samples.reduce((sum, s) => sum + (s.corrosion_rate_mm_per_yr || 0), 0) / samples.length;
-                document.getElementById('avgRate').textContent = avgRate.toFixed(4);
-                document.getElementById('materialTypes').textContent = new Set(samples.map(s => s.material)).size;
-                
-                // Update charts
-                updatePhChart(stats.ph_vs_rate || []);
-                updateTempChart(stats.temperature_vs_rate || []);
-                updateMediumChart(stats.medium_vs_rate || []);
-                
-                // Update table
-                updateTable(samples.slice(0, 10));
+                const data = await requestJson('/health');
+                healthText.textContent = data.message || 'الخادم يعمل';
+                healthDot.className = 'status-dot ok';
             } catch (error) {
-                console.error('Error loading data:', error);
+                healthText.textContent = error.message;
+                healthDot.className = 'status-dot bad';
             }
         }
-        
-        function updatePhChart(data) {
-            const ctx = document.getElementById('phChart').getContext('2d');
-            if (phChart) phChart.destroy();
-            
-            phChart = new Chart(ctx, {
-                type: 'line',
+
+        async function loadModelInfo() {
+            try {
+                const data = await requestJson('/model-info');
+                document.getElementById('modelFitMethod').textContent = data.fit_method || '-';
+                document.getElementById('modelEquation').textContent = data.equation || '-';
+                document.getElementById('selectedModelKey').textContent = data.selected_model_key || '-';
+                document.getElementById('metricR2').textContent = formatNumber(data.metrics?.test?.r2);
+                document.getElementById('metricRmse').textContent = formatNumber(data.metrics?.test?.rmse);
+                document.getElementById('metricMae').textContent = formatNumber(data.metrics?.test?.mae);
+            } catch (error) {
+                document.getElementById('modelFitMethod').textContent = error.message;
+                document.getElementById('modelEquation').textContent = '-';
+            }
+        }
+
+        async function loadMaterials() {
+            try {
+                const data = await requestJson('/materials');
+                const select = document.getElementById('materialSelect');
+                const materials = [...(data.materials || []), OTHER_MATERIAL_VALUE];
+                select.innerHTML = materials.map(item => {
+                    const label = item === OTHER_MATERIAL_VALUE ? 'أخرى (إدخال يدوي)' : item;
+                    return `<option value="${item}">${label}</option>`;
+                }).join('');
+                toggleCustomMaterial();
+            } catch (error) {
+                setMessage('calcMessage', `تعذر تحميل المواد: ${error.message}`, 'error');
+            }
+        }
+
+        function toggleCustomMaterial() {
+            const wrap = document.getElementById('customMaterialWrap');
+            wrap.style.display = document.getElementById('materialSelect').value === OTHER_MATERIAL_VALUE ? 'block' : 'none';
+        }
+
+        function updateSummaryStats(samples) {
+            document.getElementById('totalSamples').textContent = samples.length;
+            const avgRate = samples.length
+                ? samples.reduce((sum, item) => sum + Number(item.corrosion_rate_mm_per_yr || 0), 0) / samples.length
+                : 0;
+            document.getElementById('avgRate').textContent = formatNumber(avgRate);
+            document.getElementById('materialTypes').textContent = new Set(samples.map(item => item.material).filter(Boolean)).size;
+            document.getElementById('mediumTypes').textContent = new Set(samples.map(item => item.medium).filter(Boolean)).size;
+        }
+
+        function buildChart(existingChart, canvasId, type, labels, datasetLabel, values, color) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            if (existingChart) existingChart.destroy();
+            return new Chart(ctx, {
+                type,
                 data: {
-                    labels: data.map(d => d.ph),
+                    labels,
                     datasets: [{
-                        label: 'معدل التآكل (mm/yr)',
-                        data: data.map(d => d.avg_rate),
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        tension: 0.1
+                        label: datasetLabel,
+                        data: values,
+                        borderColor: color,
+                        backgroundColor: `${color}33`,
+                        borderWidth: 2,
+                        tension: 0.28,
+                        fill: type === 'line'
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: true
@@ -243,130 +894,292 @@
                 }
             });
         }
-        
-        function updateTempChart(data) {
-            const ctx = document.getElementById('tempChart').getContext('2d');
-            if (tempChart) tempChart.destroy();
-            
-            tempChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(d => d.temperature + '°C'),
-                    datasets: [{
-                        label: 'معدل التآكل (mm/yr)',
-                        data: data.map(d => d.avg_rate),
-                        borderColor: 'rgb(255, 99, 132)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
+
+        function updateCharts(stats) {
+            const phData = stats.ph_vs_rate || [];
+            const tempData = stats.temperature_vs_rate || [];
+            const mediumData = (stats.medium_vs_rate || []).slice(0, 10);
+            const materialData = (stats.material_comparison || []).slice(0, 10);
+
+            phChart = buildChart(
+                phChart,
+                'phChart',
+                'line',
+                phData.map(item => item.ph),
+                'mm/yr',
+                phData.map(item => item.avg_rate),
+                '#0f766e'
+            );
+
+            tempChart = buildChart(
+                tempChart,
+                'tempChart',
+                'line',
+                tempData.map(item => `${item.temperature}°C`),
+                'mm/yr',
+                tempData.map(item => item.avg_rate),
+                '#c97f2b'
+            );
+
+            mediumChart = buildChart(
+                mediumChart,
+                'mediumChart',
+                'bar',
+                mediumData.map(item => String(item.medium || '-').slice(0, 18)),
+                'mm/yr',
+                mediumData.map(item => item.avg_rate),
+                '#1e6091'
+            );
+
+            materialChart = buildChart(
+                materialChart,
+                'materialChart',
+                'bar',
+                materialData.map(item => String(item.material || '-').slice(0, 18)),
+                'mm/yr',
+                materialData.map(item => item.avg_rate),
+                '#7c3aed'
+            );
         }
-        
-        function updateMediumChart(data) {
-            const ctx = document.getElementById('mediumChart').getContext('2d');
-            if (mediumChart) mediumChart.destroy();
-            
-            const limitedData = data.slice(0, 10);
-            
-            mediumChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: limitedData.map(d => d.medium.substring(0, 20)),
-                    datasets: [{
-                        label: 'معدل التآكل (mm/yr)',
-                        data: limitedData.map(d => d.avg_rate),
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateTable(samples) {
+
+        function renderSamples(samples) {
             const tbody = document.getElementById('samplesBody');
-            tbody.innerHTML = samples.map(sample => `
-                <tr>
-                    <td>${sample.id || ''}</td>
-                    <td>${sample.material || ''}</td>
-                    <td>${sample.medium || '-'}</td>
-                    <td>${sample.temperature || ''}°C</td>
-                    <td>${sample.ph || '-'}</td>
-                    <td>${sample.corrosion_rate_mm_per_yr ? sample.corrosion_rate_mm_per_yr.toFixed(4) : '-'}</td>
-                </tr>
-            `).join('');
-        }
-        
-        async function uploadCSV() {
-            const fileInput = document.getElementById('csvFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('يرجى اختيار ملف');
+            if (!samples.length) {
+                tbody.innerHTML = '<tr><td colspan="9">لا توجد بيانات حالياً.</td></tr>';
                 return;
             }
-            
-            const formData = new FormData();
-            formData.append('file', file);
-            
-            const statusDiv = document.getElementById('uploadStatus');
-            statusDiv.textContent = 'جاري الرفع...';
-            
+
+            tbody.innerHTML = samples.map(sample => {
+                const rate = Number(sample.corrosion_rate_mm_per_yr || 0);
+                const tagClass = rateClass(rate);
+                return `
+                    <tr>
+                        <td>${sample.id ?? ''}</td>
+                        <td>${sample.material || '-'}</td>
+                        <td>${sample.medium || '-'}</td>
+                        <td>${sample.temperature ?? '-'}°C</td>
+                        <td>${sample.ph ?? '-'}</td>
+                        <td>${sample.nacl_percentage ?? '-'}</td>
+                        <td><span class="tag ${tagClass}">${sample.corrosion_rate_mm_per_yr ? Number(sample.corrosion_rate_mm_per_yr).toFixed(4) : '-'}</span></td>
+                        <td>${sample.corrosion_rate_mpy ? Number(sample.corrosion_rate_mpy).toFixed(2) : '-'}</td>
+                        <td>${sample.source || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function loadSamplesAndStatistics(filters = {}) {
             try {
-                const response = await fetch(`${API_URL}/upload-csv`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    statusDiv.textContent = `تم الرفع بنجاح! تم معالجة ${result.rows_processed} صف`;
-                    statusDiv.style.color = 'green';
-                    loadData();
-                } else {
-                    statusDiv.textContent = `خطأ: ${result.error}`;
-                    statusDiv.style.color = 'red';
-                }
+                clearMessage('tableMessage');
+                const search = new URLSearchParams();
+                if (filters.material) search.set('material', filters.material);
+                if (filters.medium) search.set('medium', filters.medium);
+                const samplePath = `/samples${search.toString() ? `?${search.toString()}` : ''}`;
+
+                const [stats, samplesData] = await Promise.all([
+                    requestJson('/statistics'),
+                    requestJson(samplePath),
+                ]);
+
+                const samples = samplesData.samples || [];
+                updateSummaryStats(samples);
+                updateCharts(stats);
+                renderSamples(samples.slice(0, 100));
             } catch (error) {
-                statusDiv.textContent = `خطأ: ${error.message}`;
-                statusDiv.style.color = 'red';
+                setMessage('tableMessage', `تعذر تحميل البيانات: ${error.message}`, 'error');
             }
         }
-        
-        // Load data on page load
-        loadData();
-        
-        // Refresh data every 30 seconds
-        setInterval(loadData, 30000);
+
+        async function calculateCorrosion() {
+            const materialSelect = document.getElementById('materialSelect');
+            const selectedMaterial = materialSelect.value;
+            const material = selectedMaterial === OTHER_MATERIAL_VALUE
+                ? document.getElementById('customMaterialInput').value.trim()
+                : selectedMaterial;
+
+            const temperature = document.getElementById('temperatureInput').value.trim();
+            const ph = document.getElementById('phInput').value.trim();
+            const nacl = document.getElementById('naclInput').value.trim();
+            const medium = document.getElementById('mediumInput').value.trim();
+
+            if (!material || !temperature) {
+                setMessage('calcMessage', 'يرجى إدخال نوع العينة ودرجة الحرارة على الأقل.', 'error');
+                return;
+            }
+
+            try {
+                clearMessage('calcMessage');
+                const result = await requestJson('/calculate-corrosion-rate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        material,
+                        temperature: Number(temperature),
+                        ph: ph ? Number(ph) : null,
+                        nacl_percentage: nacl ? Number(nacl) : null,
+                        medium: medium || null,
+                    })
+                });
+
+                document.getElementById('resultMm').textContent = formatNumber(result.corrosion_rate_mm_per_yr);
+                document.getElementById('resultMpy').textContent = formatNumber(result.corrosion_rate_mpy, 2);
+                document.getElementById('resultMm').className = `result-value ${rateClass(Number(result.corrosion_rate_mm_per_yr || 0))}`;
+                document.getElementById('resultMpy').className = `result-value ${rateClass(Number(result.corrosion_rate_mm_per_yr || 0))}`;
+                document.getElementById('calcEquation').textContent = result.equation_used || '-';
+                document.getElementById('calcModelName').textContent = result.model_name || '-';
+                document.getElementById('calcFitMethod').textContent = result.fit_method || '-';
+                document.getElementById('metricR2').textContent = formatNumber(result.model_metrics?.r2);
+                document.getElementById('metricRmse').textContent = formatNumber(result.model_metrics?.rmse);
+                document.getElementById('metricMae').textContent = formatNumber(result.model_metrics?.mae);
+
+                setMessage('calcMessage', 'تم تنفيذ الحساب بنجاح.', 'success');
+            } catch (error) {
+                setMessage('calcMessage', `تعذر تنفيذ الحساب: ${error.message}`, 'error');
+            }
+        }
+
+        async function uploadCsv() {
+            const input = document.getElementById('csvFile');
+            const file = input.files?.[0];
+            if (!file) {
+                setMessage('uploadMessage', 'يرجى اختيار ملف CSV أولاً.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                setMessage('uploadMessage', 'جارٍ رفع الملف ومعالجة البيانات...', 'info');
+                const response = await fetch(`${API_URL}/upload-csv`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(result.error || 'فشل رفع الملف');
+                }
+
+                setMessage(
+                    'uploadMessage',
+                    `تم رفع الملف بنجاح. تمت معالجة ${result.rows_processed || 0} صفوف وحفظ ${result.rows_saved || 0}.`,
+                    'success'
+                );
+                input.value = '';
+                await loadSamplesAndStatistics();
+                await loadMaterials();
+            } catch (error) {
+                setMessage('uploadMessage', `تعذر رفع الملف: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearDatabase() {
+            const approved = window.confirm('سيتم حذف جميع البيانات المستوردة والحسابات المحفوظة والملفات المرفوعة. هل تريد المتابعة؟');
+            if (!approved) return;
+
+            try {
+                setMessage('uploadMessage', 'جارٍ مسح البيانات...', 'info');
+                const result = await requestJson('/clear-database', { method: 'DELETE' });
+                setMessage(
+                    'uploadMessage',
+                    `تم المسح بنجاح. العينات المحذوفة: ${result.deleted_counts?.corrosion_samples || 0}، الحسابات: ${result.deleted_counts?.calculated_corrosion_rates || 0}.`,
+                    'success'
+                );
+                await loadSamplesAndStatistics();
+                await loadMaterials();
+            } catch (error) {
+                setMessage('uploadMessage', `تعذر مسح البيانات: ${error.message}`, 'error');
+            }
+        }
+
+        async function retrainModel() {
+            try {
+                setMessage('calcMessage', 'جارٍ إعادة تدريب النموذج...', 'info');
+                const result = await requestJson('/train-model', { method: 'POST' });
+                setMessage('calcMessage', result.message || 'تمت إعادة التدريب بنجاح.', 'success');
+                await loadModelInfo();
+            } catch (error) {
+                setMessage('calcMessage', `تعذر إعادة التدريب: ${error.message}`, 'error');
+            }
+        }
+
+        function fillSampleValues() {
+            document.getElementById('materialSelect').value = 'API 5L X65';
+            toggleCustomMaterial();
+            document.getElementById('temperatureInput').value = '25';
+            document.getElementById('phInput').value = '7';
+            document.getElementById('naclInput').value = '3.5';
+            document.getElementById('mediumInput').value = 'seawater';
+        }
+
+        async function runScenarioIfNeeded() {
+            const params = new URLSearchParams(window.location.search);
+            const scenario = params.get('scenario');
+            if (!scenario) return;
+
+            if (scenario === 'sample-calculation-result') {
+                fillSampleValues();
+                await new Promise(resolve => setTimeout(resolve, 300));
+                await calculateCorrosion();
+            }
+        }
+
+        function applyFilters() {
+            const material = document.getElementById('filterMaterial').value.trim();
+            const medium = document.getElementById('filterMedium').value.trim();
+            loadSamplesAndStatistics({ material, medium });
+        }
+
+        function resetFilters() {
+            document.getElementById('filterMaterial').value = '';
+            document.getElementById('filterMedium').value = '';
+            loadSamplesAndStatistics();
+        }
+
+        async function refreshAll() {
+            await Promise.all([
+                loadHealth(),
+                loadModelInfo(),
+                loadMaterials(),
+                loadSamplesAndStatistics(),
+            ]);
+        }
+
+        function scrollToHashTarget() {
+            if (!window.location.hash) return;
+            const target = document.querySelector(window.location.hash);
+            if (!target) return;
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'instant', block: 'start' });
+            }, 250);
+        }
+
+        function applyScenarioFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            const scenario = params.get('scenario');
+            if (!scenario) return;
+
+            if (scenario === 'sample-calculation') {
+                fillSampleValues();
+            }
+        }
+
+        document.getElementById('materialSelect').addEventListener('change', toggleCustomMaterial);
+        document.getElementById('calculateBtn').addEventListener('click', calculateCorrosion);
+        document.getElementById('fillSampleBtn').addEventListener('click', fillSampleValues);
+        document.getElementById('trainModelBtn').addEventListener('click', retrainModel);
+        document.getElementById('uploadBtn').addEventListener('click', uploadCsv);
+        document.getElementById('clearDbBtn').addEventListener('click', clearDatabase);
+        document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+        document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+        document.getElementById('refreshAllBtn').addEventListener('click', refreshAll);
+
+        applyScenarioFromQuery();
+        refreshAll().then(async () => {
+            await runScenarioIfNeeded();
+            scrollToHashTarget();
+        });
+        setInterval(loadHealth, 30000);
     </script>
 </body>
 </html>
-
