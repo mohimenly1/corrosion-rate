@@ -7,6 +7,7 @@ from config import Config
 from database.db_connection import DatabaseConnection
 from services.csv_processor import CSVProcessor
 from services.corrosion_calculator import CorrosionRateCalculator
+from services.model_trainer import CorrosionModelTrainer
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +22,25 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 db = DatabaseConnection()
+
+CURATED_MATERIALS = [
+    'API 5L X65',
+    'Carbon Steel',
+    'Stainless Steel 316',
+    'Duplex Stainless Steel',
+    'Low Alloy Steel',
+]
+
+
+def _json_safe_rows(rows):
+    """Convert Decimal values returned by MySQL into JSON-safe floats."""
+    import decimal
+
+    for row in rows:
+        for key, value in row.items():
+            if isinstance(value, decimal.Decimal):
+                row[key] = float(value)
+    return rows
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -46,6 +66,18 @@ def upload_csv():
             # Process CSV
             processor = CSVProcessor()
             processed_data = processor.process_corrosion_csv(filepath)
+
+            try:
+                upload_query = """
+                    INSERT INTO csv_uploads (filename, file_path, rows_imported, status)
+                    VALUES (%s, %s, %s, %s)
+                """
+                db.execute_query(
+                    upload_query,
+                    (filename, filepath, len(processed_data), 'processed')
+                )
+            except Exception as e:
+                logger.error(f"Error saving upload metadata: {e}")
             
             # Save to database
             saved_count = 0
@@ -142,6 +174,33 @@ def calculate_corrosion_rate():
         logger.error(f"Error calculating corrosion rate: {e}")
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/api/model-info', methods=['GET'])
+def get_model_info():
+    """Return the currently trained corrosion model metadata."""
+    try:
+        model_data = CorrosionRateCalculator._load_or_train_model()
+        if not model_data:
+            return jsonify({'error': 'No trained model is available'}), 500
+        return jsonify(model_data), 200
+    except Exception as e:
+        logger.error(f"Error fetching model info: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/train-model', methods=['POST'])
+def train_model():
+    """Retrain the corrosion model from the NaCl dataset."""
+    try:
+        model_data = CorrosionModelTrainer.train_from_csv()
+        return jsonify({
+            'message': 'Model trained successfully',
+            'model': model_data
+        }), 200
+    except Exception as e:
+        logger.error(f"Error training model: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/samples', methods=['GET'])
 def get_samples():
     """Get all corrosion samples with optional filters"""
@@ -186,11 +245,7 @@ def get_samples():
             results = db.execute_query(query, tuple(params) if params else None)
             
             # Convert Decimal to float for JSON serialization
-            import decimal
-            for row in results:
-                for key, value in row.items():
-                    if isinstance(value, decimal.Decimal):
-                        row[key] = float(value)
+            results = _json_safe_rows(results)
         except Exception as db_error:
             logger.error(f"Database error in get_samples: {db_error}")
             # Check if table exists
@@ -213,6 +268,52 @@ def get_samples():
             'error': str(e),
             'message': 'Failed to fetch samples from database'
         }), 500
+
+
+@app.route('/api/clear-database', methods=['DELETE'])
+def clear_database():
+    """Clear imported samples, calculations, upload history, and uploaded files."""
+    try:
+        deleted_counts = {}
+        deleted_counts['calculated_corrosion_rates'] = db.execute_query(
+            "DELETE FROM calculated_corrosion_rates"
+        )
+        deleted_counts['corrosion_samples'] = db.execute_query(
+            "DELETE FROM corrosion_samples"
+        )
+        deleted_counts['csv_uploads'] = db.execute_query("DELETE FROM csv_uploads")
+
+        for table_name in (
+            'calculated_corrosion_rates',
+            'corrosion_samples',
+            'csv_uploads',
+        ):
+            try:
+                db.execute_query(f"ALTER TABLE {table_name} AUTO_INCREMENT = 1")
+            except Exception as e:
+                logger.warning(f"Could not reset AUTO_INCREMENT for {table_name}: {e}")
+
+        removed_files = 0
+        upload_dir = app.config['UPLOAD_FOLDER']
+        if os.path.isdir(upload_dir):
+            for filename in os.listdir(upload_dir):
+                file_path = os.path.join(upload_dir, filename)
+                if os.path.isfile(file_path):
+                    try:
+                        os.remove(file_path)
+                        removed_files += 1
+                    except Exception as e:
+                        logger.warning(f"Could not remove upload file {file_path}: {e}")
+
+        deleted_counts['upload_files'] = removed_files
+
+        return jsonify({
+            'message': 'Database records cleared successfully',
+            'deleted_counts': deleted_counts
+        }), 200
+    except Exception as e:
+        logger.error(f"Error clearing database: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/statistics', methods=['GET'])
 def get_statistics():
@@ -257,6 +358,10 @@ def get_statistics():
             ORDER BY avg_rate DESC
         """
         material_data = db.execute_query(material_query)
+        ph_data = _json_safe_rows(ph_data)
+        temp_data = _json_safe_rows(temp_data)
+        medium_data = _json_safe_rows(medium_data)
+        material_data = _json_safe_rows(material_data)
         
         return jsonify({
             'ph_vs_rate': ph_data,
@@ -275,7 +380,8 @@ def get_materials():
     try:
         query = "SELECT DISTINCT material FROM corrosion_samples WHERE material IS NOT NULL"
         results = db.execute_query(query)
-        materials = [r['material'] for r in results]
+        db_materials = [r['material'] for r in results if r.get('material')]
+        materials = list(dict.fromkeys(CURATED_MATERIALS + sorted(db_materials)))
         return jsonify({'materials': materials}), 200
     except Exception as e:
         logger.error(f"Error fetching materials: {e}")
@@ -300,4 +406,3 @@ def dashboard():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=Config.FLASK_PORT, debug=(Config.FLASK_ENV == 'development'))
-
