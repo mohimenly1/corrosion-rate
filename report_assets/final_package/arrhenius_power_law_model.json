@@ -1,0 +1,132 @@
+{
+  "model_name": "Arrhenius Power Law with Exponential pH",
+  "equation": "CR = A * [Cl-]^b * exp(-K / Tk) * exp(c * pH)",
+  "fit_method": "linearized_ols",
+  "random_seed": 42,
+  "train_size": 30,
+  "test_size": 20,
+  "parameters": {
+    "A": 6669627.201491086,
+    "b": 0.17469067082303447,
+    "K": 3834.692934796586,
+    "c": -0.9002988985531402
+  },
+  "initial_linearized_parameters": {
+    "A": 6669627.201491086,
+    "b": 0.17469067082303447,
+    "K": 3834.692934796586,
+    "c": -0.9002988985531402
+  },
+  "linearized_regression_summary": {
+    "equation": "ln(CR) = ln(A) + b*ln([Cl-]) - K*(1/Tk) + c*pH",
+    "degrees_of_freedom": 26,
+    "coefficients": [
+      {
+        "term": "ln(A)",
+        "coefficient": 15.713075,
+        "std_error": 0.786267,
+        "t_stat": 19.9844,
+        "p_value": 0.0
+      },
+      {
+        "term": "b for ln([Cl-])",
+        "coefficient": 0.174691,
+        "std_error": 0.039627,
+        "t_stat": 4.4083,
+        "p_value": 1e-05
+      },
+      {
+        "term": "-K for (1/Tk)",
+        "coefficient": -3834.692935,
+        "std_error": 233.275167,
+        "t_stat": -16.4385,
+        "p_value": 0.0
+      },
+      {
+        "term": "c for pH",
+        "coefficient": -0.900299,
+        "std_error": 0.020729,
+        "t_stat": -43.4312,
+        "p_value": 0.0
+      }
+    ]
+  },
+  "metrics": {
+    "train": {
+      "r2": 0.9832,
+      "rmse": 0.361,
+      "mae": 0.1079
+    },
+    "test": {
+      "r2": 0.9606,
+      "rmse": 0.6837,
+      "mae": 0.2723
+    },
+    "all_data": {
+      "r2": 0.9719,
+      "rmse": 0.5149,
+      "mae": 0.1736
+    }
+  },
+  "candidate_models": {
+    "linearized": {
+      "fit_method": "linearized_ols",
+      "parameters": {
+        "A": 6669627.201491086,
+        "b": 0.17469067082303447,
+        "K": 3834.692934796586,
+        "c": -0.9002988985531402
+      },
+      "metrics": {
+        "train": {
+          "r2": 0.9832,
+          "rmse": 0.361,
+          "mae": 0.1079
+        },
+        "test": {
+          "r2": 0.9606,
+          "rmse": 0.6837,
+          "mae": 0.2723
+        },
+        "all_data": {
+          "r2": 0.9719,
+          "rmse": 0.5149,
+          "mae": 0.1736
+        }
+      }
+    },
+    "nonlinear": {
+      "fit_method": "nonlinear_least_squares",
+      "parameters": {
+        "A": 556499378.7890701,
+        "b": -0.21419160670458515,
+        "K": 5049.490698404909,
+        "c": -0.8910424109938089
+      },
+      "metrics": {
+        "train": {
+          "r2": 0.9987,
+          "rmse": 0.0996,
+          "mae": 0.0608
+        },
+        "test": {
+          "r2": 0.8832,
+          "rmse": 1.1765,
+          "mae": 0.4583
+        },
+        "all_data": {
+          "r2": 0.9407,
+          "rmse": 0.7481,
+          "mae": 0.2198
+        }
+      }
+    }
+  },
+  "selected_model_key": "linearized",
+  "model_selection_reason": "Selected the model with the lower test RMSE on the unseen split.",
+  "outlier_handling": "High-corrosion observations such as aggressive-condition samples were retained in training and validation and were not removed as outliers.",
+  "training_data": {
+    "csv_path": "/Users/sulimangzllal/Development/hareth/NaCl_50samples_corrosion_table_with_sources.csv",
+    "rows_used": 50
+  }
+}
