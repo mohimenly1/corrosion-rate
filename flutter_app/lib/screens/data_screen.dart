@@ -53,10 +53,7 @@ class _DataScreenState extends State<DataScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'تأكد من أن Backend يعمل وأن قاعدة البيانات موجودة',
-                  style: GoogleFonts.cairo(
-                    color: Colors.orange,
-                    fontSize: 12,
-                  ),
+                  style: GoogleFonts.cairo(color: Colors.orange, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -74,7 +71,11 @@ class _DataScreenState extends State<DataScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.table_chart_outlined, size: 64, color: Colors.grey.shade400),
+                Icon(
+                  Icons.table_chart_outlined,
+                  size: 64,
+                  color: Colors.grey.shade400,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'لا توجد بيانات',
@@ -112,75 +113,145 @@ class _DataScreenState extends State<DataScreen> {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                  child: DataTable2(
-                    columnSpacing: 12,
-                    horizontalMargin: 12,
-                    minWidth: 1000,
-                    columns: [
-                      DataColumn2(
-                        label: Text('ID', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.S,
-                      ),
-                      DataColumn2(
-                        label: Text('العينة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.L,
-                      ),
-                      DataColumn2(
-                        label: Text('الوسط', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.L,
-                      ),
-                      DataColumn2(
-                        label: Text('درجة الحرارة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.M,
-                      ),
-                      DataColumn2(
-                        label: Text('pH', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.S,
-                      ),
-                      DataColumn2(
-                        label: Text('NaCl %', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.S,
-                      ),
-                      DataColumn2(
-                        label: Text('معدل التآكل (mm/yr)', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.M,
-                      ),
-                      DataColumn2(
-                        label: Text('معدل التآكل (mpy)', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                        size: ColumnSize.M,
-                      ),
-                    ],
-                    rows: provider.samples.take(100).map((sample) {
-                      return DataRow2(
-                        cells: [
-                          DataCell(Text('${sample.id ?? ''}')),
-                          DataCell(Text(sample.material)),
-                          DataCell(Text(sample.medium ?? '-')),
-                          DataCell(Text('${sample.temperature}°C')),
-                          DataCell(Text(sample.ph?.toStringAsFixed(1) ?? '-')),
-                          DataCell(Text(sample.naclPercentage?.toStringAsFixed(2) ?? '-')),
-                          DataCell(Text(
-                            sample.corrosionRateMmPerYr?.toStringAsFixed(4) ?? '-',
-                            style: TextStyle(
-                              color: _getRateColor(sample.corrosionRateMmPerYr),
-                              fontWeight: FontWeight.bold,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final tableWidth = constraints.maxWidth < 1000
+                      ? 1000.0
+                      : constraints.maxWidth;
+
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: tableWidth, // ✅ عرض محدد (tight)
+                      height: constraints.maxHeight, // ✅ ارتفاع محدد (tight)
+                      child: DataTable2(
+                        columnSpacing: 12,
+                        horizontalMargin: 12,
+                        columns: [
+                          DataColumn2(
+                            label: Text(
+                              'ID',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          )),
-                          DataCell(Text(
-                            sample.corrosionRateMpy?.toStringAsFixed(2) ?? '-',
-                            style: TextStyle(
-                              color: _getRateColor(sample.corrosionRateMmPerYr),
-                              fontWeight: FontWeight.bold,
+                            size: ColumnSize.S,
+                          ),
+                          DataColumn2(
+                            label: Text(
+                              'العينة',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          )),
+                            size: ColumnSize.L,
+                          ),
+                          DataColumn2(
+                            label: Text(
+                              'الوسط',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            size: ColumnSize.L,
+                          ),
+                          DataColumn2(
+                            label: Text(
+                              'درجة الحرارة',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            size: ColumnSize.M,
+                          ),
+                          DataColumn2(
+                            label: Text(
+                              'pH',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            size: ColumnSize.S,
+                          ),
+                          DataColumn2(
+                            label: Text(
+                              'NaCl %',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            size: ColumnSize.S,
+                          ),
+                          DataColumn2(
+                            label: Text(
+                              'معدل التآكل (mm/yr)',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            size: ColumnSize.M,
+                          ),
+                          DataColumn2(
+                            label: Text(
+                              'معدل التآكل (mpy)',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            size: ColumnSize.M,
+                          ),
                         ],
-                      );
-                    }).toList(),
-                  ),
-                ),
+                        rows: provider.samples.take(100).map((sample) {
+                          return DataRow2(
+                            cells: [
+                              DataCell(Text('${sample.id ?? ''}')),
+                              DataCell(
+                                Text(sample.material),
+                              ), // إذا ممكن null خلّها sample.material ?? '-'
+                              DataCell(Text(sample.medium ?? '-')),
+                              DataCell(Text('${sample.temperature}°C')),
+                              DataCell(
+                                Text(sample.ph?.toStringAsFixed(1) ?? '-'),
+                              ),
+                              DataCell(
+                                Text(
+                                  sample.naclPercentage?.toStringAsFixed(2) ??
+                                      '-',
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  sample.corrosionRateMmPerYr?.toStringAsFixed(
+                                        4,
+                                      ) ??
+                                      '-',
+                                  style: TextStyle(
+                                    color: _getRateColor(
+                                      sample.corrosionRateMmPerYr,
+                                    ),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  sample.corrosionRateMpy?.toStringAsFixed(2) ??
+                                      '-',
+                                  style: TextStyle(
+                                    color: _getRateColor(
+                                      sample.corrosionRateMmPerYr,
+                                    ),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -196,4 +267,3 @@ class _DataScreenState extends State<DataScreen> {
     return Colors.red;
   }
 }
-

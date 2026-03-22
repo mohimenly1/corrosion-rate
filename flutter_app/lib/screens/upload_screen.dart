@@ -16,6 +16,62 @@ class _UploadScreenState extends State<UploadScreen> {
   String? _selectedFile;
   bool _uploading = false;
 
+  Future<void> _confirmAndClearDatabase() async {
+    final shouldClear = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'تأكيد المسح',
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'سيتم حذف جميع العينات المستوردة والحسابات المحفوظة وسجل الملفات المرفوعة. هل تريد المتابعة؟',
+          style: GoogleFonts.cairo(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('إلغاء', style: GoogleFonts.cairo()),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('مسح', style: GoogleFonts.cairo()),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldClear != true || !mounted) return;
+
+    final provider = Provider.of<CorrosionProvider>(context, listen: false);
+    final result = await provider.clearDatabase();
+    if (!mounted) return;
+
+    if (provider.error == null && result != null) {
+      final deletedCounts =
+          Map<String, dynamic>.from(result['deleted_counts'] ?? {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'تم المسح بنجاح: عينات ${deletedCounts['corrosion_samples'] ?? 0}، حسابات ${deletedCounts['calculated_corrosion_rates'] ?? 0}',
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('خطأ: ${provider.error ?? 'تعذر مسح البيانات'}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   Future<void> _pickAndUploadFile() async {
     try {
       // Use file_picker to pick CSV files
@@ -109,16 +165,17 @@ class _UploadScreenState extends State<UploadScreen> {
       });
 
       final provider = Provider.of<CorrosionProvider>(context, listen: false);
+      Map<String, dynamic>? uploadResult;
       
       // Try to upload using path first, then bytes if path is not available
       if (file.path != null) {
         debugPrint('📤 رفع الملف باستخدام path: ${file.path}');
         // Use path if available (faster)
-        await provider.uploadCsv(file.path!);
+        uploadResult = await provider.uploadCsv(file.path!);
       } else if (file.bytes != null) {
         debugPrint('📤 رفع الملف باستخدام bytes: ${file.bytes!.length} bytes');
         // Use bytes directly if path is not available (Android compatibility)
-        await provider.uploadCsvFromBytes(file.bytes!, file.name);
+        uploadResult = await provider.uploadCsvFromBytes(file.bytes!, file.name);
       } else {
         // No path and no bytes - show error
         debugPrint('═══════════════════════════════════════════════════════════');
@@ -159,7 +216,7 @@ class _UploadScreenState extends State<UploadScreen> {
         messenger.showSnackBar(
           SnackBar(
             content: Text(
-              'تم رفع الملف بنجاح! تم معالجة ${provider.samples.length} عينة',
+              'تم رفع الملف بنجاح! تمت معالجة ${uploadResult?['rows_processed'] ?? 0} صفوف وحفظ ${uploadResult?['rows_saved'] ?? 0}',
             ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
@@ -332,6 +389,49 @@ class _UploadScreenState extends State<UploadScreen> {
                             ),
                             elevation: 2,
                           ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Card(
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'إدارة البيانات',
+                        style: GoogleFonts.cairo(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'استخدم هذا الخيار لمسح جميع البيانات المستوردة والحسابات المحفوظة وإعادة العرض من البداية.',
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton.icon(
+                        onPressed: provider.isLoading ? null : _confirmAndClearDatabase,
+                        icon: const Icon(Icons.delete_sweep_outlined),
+                        label: Text(
+                          'مسح قاعدة البيانات',
+                          style: GoogleFonts.cairo(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red.shade700,
+                          side: BorderSide(color: Colors.red.shade300),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),
                     ],

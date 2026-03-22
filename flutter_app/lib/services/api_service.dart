@@ -191,5 +191,19 @@ class ApiService {
       return false;
     }
   }
-}
 
+  Future<Map<String, dynamic>> clearDatabase() async {
+    try {
+      final response = await http.delete(Uri.parse('$baseUrl/clear-database'));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        final error = json.decode(response.body);
+        throw Exception(error['error'] ?? 'Failed to clear database');
+      }
+    } catch (e) {
+      throw Exception('Error clearing database: $e');
+    }
+  }
+}

@@ -78,34 +78,39 @@ class CorrosionProvider with ChangeNotifier {
     }
   }
 
-  Future<void> uploadCsv(String filePath) async {
+  Future<Map<String, dynamic>?> uploadCsv(String filePath) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await _apiService.uploadCsv(filePath);
-      // Reload samples after upload
+      final response = await _apiService.uploadCsv(filePath);
       await loadSamples();
+      return response;
     } catch (e) {
       _error = e.toString();
+      return null;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> uploadCsvFromBytes(List<int> bytes, String filename) async {
+  Future<Map<String, dynamic>?> uploadCsvFromBytes(
+    List<int> bytes,
+    String filename,
+  ) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await _apiService.uploadCsvFromBytes(bytes, filename);
-      // Reload samples after upload
+      final response = await _apiService.uploadCsvFromBytes(bytes, filename);
       await loadSamples();
+      return response;
     } catch (e) {
       _error = e.toString();
+      return null;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -146,5 +151,25 @@ class CorrosionProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-}
 
+  Future<Map<String, dynamic>?> clearDatabase() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _apiService.clearDatabase();
+      _samples = [];
+      _statistics = null;
+      _materials = [];
+      _mediums = [];
+      return response;
+    } catch (e) {
+      _error = e.toString();
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+}

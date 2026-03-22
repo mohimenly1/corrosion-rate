@@ -11,6 +11,15 @@ class CalculationScreen extends StatefulWidget {
 }
 
 class _CalculationScreenState extends State<CalculationScreen> {
+  static const String _otherMaterialValue = '__other__';
+  static const List<String> _curatedMaterials = [
+    'API 5L X65',
+    'Carbon Steel',
+    'Stainless Steel 316',
+    'Duplex Stainless Steel',
+    'Low Alloy Steel',
+  ];
+
   final _formKey = GlobalKey<FormState>();
   final _materialController = TextEditingController();
   final _temperatureController = TextEditingController();
@@ -31,11 +40,27 @@ class _CalculationScreenState extends State<CalculationScreen> {
     final provider = Provider.of<CorrosionProvider>(context, listen: false);
     await provider.loadMaterials();
     setState(() {
-      _materials = provider.materials;
+      _materials = _mergeMaterials(provider.materials);
       if (_materials.isNotEmpty) {
         _selectedMaterial = _materials.first;
       }
     });
+  }
+
+  List<String> _mergeMaterials(List<String> apiMaterials) {
+    final merged = <String>[
+      ..._curatedMaterials,
+      ...apiMaterials.where((item) => !_curatedMaterials.contains(item)),
+      _otherMaterialValue,
+    ];
+    return merged;
+  }
+
+  String _selectedMaterialValue() {
+    if (_selectedMaterial == _otherMaterialValue) {
+      return _materialController.text.trim();
+    }
+    return (_selectedMaterial ?? _materialController.text).trim();
   }
 
   Future<void> _calculate() async {
@@ -43,7 +68,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
       final provider = Provider.of<CorrosionProvider>(context, listen: false);
       
       await provider.calculateCorrosionRate(
-        material: _selectedMaterial ?? _materialController.text,
+        material: _selectedMaterialValue(),
         temperature: double.parse(_temperatureController.text),
         ph: _phController.text.isNotEmpty 
             ? double.parse(_phController.text) 
@@ -194,6 +219,76 @@ class _CalculationScreenState extends State<CalculationScreen> {
                           ],
                         ),
                       ),
+                      if (calculation.modelName != null ||
+                          calculation.fitMethod != null ||
+                          calculation.modelMetrics != null) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.blue.shade100,
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.insights,
+                                    size: 20,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'معلومات النموذج',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.blue.shade900,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (calculation.modelName != null) ...[
+                                const SizedBox(height: 10),
+                                _buildInfoLine(
+                                  'اسم النموذج',
+                                  calculation.modelName!,
+                                ),
+                              ],
+                              if (calculation.fitMethod != null) ...[
+                                const SizedBox(height: 6),
+                                _buildInfoLine(
+                                  'طريقة الملاءمة',
+                                  calculation.fitMethod!,
+                                ),
+                              ],
+                              if (calculation.modelMetrics != null) ...[
+                                const SizedBox(height: 10),
+                                _buildInfoLine(
+                                  'R² للاختبار',
+                                  _formatMetric(calculation.modelMetrics!['r2']),
+                                ),
+                                const SizedBox(height: 6),
+                                _buildInfoLine(
+                                  'RMSE للاختبار',
+                                  '${_formatMetric(calculation.modelMetrics!['rmse'])} mm/yr',
+                                ),
+                                const SizedBox(height: 6),
+                                _buildInfoLine(
+                                  'MAE للاختبار',
+                                  '${_formatMetric(calculation.modelMetrics!['mae'])} mm/yr',
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -320,6 +415,43 @@ class _CalculationScreenState extends State<CalculationScreen> {
     );
   }
 
+  Widget _buildInfoLine(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 4,
+          child: Text(
+            label,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 6,
+          child: Text(
+            value,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              color: Colors.grey.shade900,
+            ),
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatMetric(dynamic value) {
+    if (value == null) return '-';
+    if (value is num) return value.toStringAsFixed(4);
+    return value.toString();
+  }
+
   Color _getRateColor(double rate) {
     if (rate < 0.1) return Colors.green.shade700;
     if (rate < 1.0) return Colors.orange.shade700;
@@ -362,9 +494,19 @@ class _CalculationScreenState extends State<CalculationScreen> {
                             items: _materials.map((material) {
                               return DropdownMenuItem(
                                 value: material,
-                                child: Text(material),
+                                child: Text(
+                                  material == _otherMaterialValue
+                                      ? 'أخرى (إدخال يدوي)'
+                                      : material,
+                                ),
                               );
                             }).toList(),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'يرجى اختيار نوع العينة';
+                              }
+                              return null;
+                            },
                             onChanged: (value) {
                               setState(() {
                                 _selectedMaterial = value;
@@ -372,6 +514,23 @@ class _CalculationScreenState extends State<CalculationScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
+                          if (_selectedMaterial == _otherMaterialValue) ...[
+                            TextFormField(
+                              controller: _materialController,
+                              decoration: const InputDecoration(
+                                labelText: 'أدخل نوع العينة',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (_selectedMaterial == _otherMaterialValue &&
+                                    (value == null || value.trim().isEmpty)) {
+                                  return 'يرجى إدخال نوع العينة';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
                         ] else ...[
                           TextFormField(
                             controller: _materialController,
@@ -483,4 +642,3 @@ class _CalculationScreenState extends State<CalculationScreen> {
     super.dispose();
   }
 }
-
